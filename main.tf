@@ -13,4 +13,5 @@ module "gcs_buckets" {
   versioning                  = var.versioning
   uniform_bucket_level_access = var.uniform_bucket_level_access
   bucket_count                = var.bucket_count
+  
 }
