@@ -36,5 +36,5 @@ variable "uniform_bucket_level_access" {
 variable "bucket_count" {
   description = "Number of buckets to create"
   type        = number
-  default     = 1
+  default     = 3
 }
