@@ -32,7 +32,7 @@ jobs:
 
     - name: Initialize Terraform
       run: |
-        terraform init -backend-config=backend.tf
+        terraform init
         env:
           GOOGLE_CREDENTIALS: ${{ secrets.GCP_TF_KEY}}
 
