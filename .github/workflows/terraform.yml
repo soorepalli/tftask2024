@@ -14,50 +14,33 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v3
 
-      # Step 2: Authenticate to Google Cloud
-      - name: Authenticate to Google Cloud
-        uses: google-github-actions/auth@v1
+      # Step 2: Set up Google Cloud SDK
+      - name: Set up Google Cloud SDK
+        uses: google-github-actions/setup-gcloud@v1
         with:
-          credentials_json: ${{ secrets.GCP_TF_KEY }}
+          project_id: ${{ secrets.GCP_PROJECT_ID }}
+          service_account_key: ${{ secrets.GCP_TF_KEY }}
+          export_default_credentials: true
 
-      # Step 3: Write Service Account Key to a File
-      - name: Write Service Account Key to File
-        run: echo "${{ secrets.GCP_TF_KEY }}" > $HOME/gcloud-key.json
-        shell: bash
-
-      # Step 4: Export GOOGLE_APPLICATION_CREDENTIALS
-      - name: Export GOOGLE_APPLICATION_CREDENTIALS
-        run: echo "GOOGLE_APPLICATION_CREDENTIALS=$HOME/gcloud-key.json" >> $GITHUB_ENV
-
-      # Step 5: Verify Environment and Credentials
-      - name: Debug Credentials and Environment Variables
-        run: |
-          ls -l $HOME/gcloud-key.json
-          cat $HOME/gcloud-key.json | jq .
-
-      # Step 6: Install Terraform
+      # Step 3: Install Terraform
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v2
         with:
-          terraform_version: 1.5.6
+          terraform_version: 1.5.6 # Update to your required Terraform version
 
-      # Step 7: Terraform Init
+      # Step 4: Initialize Terraform
       - name: Terraform Init
-        env:
-          GOOGLE_APPLICATION_CREDENTIALS: ${{ env.GOOGLE_APPLICATION_CREDENTIALS }}
         run: terraform init
 
-      # Step 8: Terraform Validate
+      # Step 5: Terraform Validate
       - name: Terraform Validate
         run: terraform validate
 
-      # Step 9: Terraform Plan
+      # Step 6: Terraform Plan
       - name: Terraform Plan
         run: terraform plan -out=tfplan
 
-      # Step 10: Terraform Apply
+      # Step 7: Terraform Apply
       - name: Terraform Apply
-        if: github.ref == 'refs/heads/main'
+        if: github.ref == 'refs/heads/main' # Apply only on main branch
         run: terraform apply -auto-approve tfplan
-
-        
