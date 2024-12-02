@@ -14,10 +14,10 @@ jobs:
           - user1
           - user2
           - user3
-
     steps:
     - name: Checkout Repository
       uses: actions/checkout@v3
+
 
     # Step 2: Set up Google Cloud SDK
     - name: Set up Google Cloud SDK
@@ -33,32 +33,38 @@ jobs:
     - name: Set Environment Variable
       run: echo "GOOGLE_APPLICATION_CREDENTIALS=/tmp/google-credentials.json" >> $GITHUB_ENV
 
-    # Step 4: Install Terraform
-    - name: Setup Terraform
-      uses: hashicorp/setup-terraform@v2
-      with:
-        terraform_version: 1.5.6 # Update to your required Terraform version
+
+    - name: Check if user-specific files changed
+      id: check_changes
+      run: |
+        echo "Checking if ${USER} configuration files have changed..."
+        git diff --exit-code --quiet "users/${{ matrix.user }}.tfvars" || echo "Configuration for ${matrix.user} changed."
+        git diff --exit-code --quiet "users/${{ matrix.user }}_backend.tf" || echo "Backend configuration for ${matrix.user} changed."
+        echo "changed=${?}" >> $GITHUB_ENV
 
     - name: Set Backend Configuration for ${{ matrix.user }}
+      if: env.changed == '0'
       run: |
         # Dynamically generate backend.tf for the user
         cp "users/${{ matrix.user }}_backend.tf" backend.tf
 
-    - name: Initialize Terraform
+    - name: Initialize Terraform for ${{ matrix.user }}
+      if: env.changed == '0'
       run: |
-        terraform init
+        terraform init -backend-config=backend.tf
       env:
         GOOGLE_CREDENTIALS: ${{ secrets.GCP_TF_KEY}}
 
     - name: Terraform Plan for ${{ matrix.user }}
+      if: env.changed == '0'
       run: |
         terraform plan -var-file="users/${{ matrix.user }}.tfvars" -out=plan.tfplan
       env:
         GOOGLE_CREDENTIALS: ${{ secrets.GCP_TF_KEY}}
 
     - name: Terraform Apply for ${{ matrix.user }}
+      if: env.changed == '0'
       run: |
         terraform apply -auto-approve plan.tfplan
       env:
         GOOGLE_CREDENTIALS: ${{ secrets.GCP_TF_KEY}}
-
