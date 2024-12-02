@@ -49,7 +49,8 @@ jobs:
     - name: Initialize Terraform for ${{ matrix.user }}
       if: env.changed == '0'
       run: |
-        terraform workspace new ${matrix.user} || terraform workspace select ${matrix.user}
+        user_workspace="${{ matrix.user }}"
+        terraform workspace new "$user_workspace" || terraform workspace select "$user_workspace"
         # terraform init -backend-config=backend.tf
         terraform init
       env:
