@@ -47,19 +47,18 @@ jobs:
     - name: Initialize Terraform
       run: |
         terraform init
-        env:
-          GOOGLE_CREDENTIALS: ${{ secrets.GCP_TF_KEY}}
+      env:
+        GOOGLE_CREDENTIALS: ${{ secrets.GCP_TF_KEY}}
 
     - name: Terraform Plan for ${{ matrix.user }}
       run: |
         terraform plan -var-file="users/${{ matrix.user }}.tfvars" -out=plan.tfplan
-        env:
-          GOOGLE_CREDENTIALS: ${{ secrets.GCP_TF_KEY}}
+      env:
+        GOOGLE_CREDENTIALS: ${{ secrets.GCP_TF_KEY}}
 
     - name: Terraform Apply for ${{ matrix.user }}
       run: |
         terraform apply -auto-approve plan.tfplan
-        env:
-          GOOGLE_CREDENTIALS: ${{ secrets.GCP_TF_KEY}}
+      env:
+        GOOGLE_CREDENTIALS: ${{ secrets.GCP_TF_KEY}}
 
-          
