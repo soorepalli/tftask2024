@@ -2,6 +2,7 @@ variable "credentials_file" {
   description = "Path to the GCP credentials file"
   type        = string
   //default     = "./nichecloudexpert-1bbb33e34e42.json"
+  default = ""
 }
 
 variable "project_id" {
