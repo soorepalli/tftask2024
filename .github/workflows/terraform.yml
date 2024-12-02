@@ -51,7 +51,8 @@ jobs:
     - name: Initialize Terraform for ${{ matrix.user }}
       if: env.changed == '0'
       run: |
-        terraform init -backend-config=backend.tf
+        # terraform init -backend-config=backend.tf
+          terraform init
       env:
         GOOGLE_CREDENTIALS: ${{ secrets.GCP_TF_KEY}}
 
