@@ -18,21 +18,12 @@ jobs:
     - name: Checkout Repository
       uses: actions/checkout@v3
 
-
-    # Step 2: Set up Google Cloud SDK
-    - name: Set up Google Cloud SDK
-      uses: google-github-actions/setup-gcloud@v1
-      with:
-        project_id: ${{ secrets.GCP_PROJECT_ID }}
-        service_account_key: ${{ secrets.GCP_TF_KEY }}
-        export_default_credentials: true
-
-    # Step 3: Set Google Application Default Credentials
-    - name: Export Google Credentials
-      run: echo "${{ secrets.GCP_TF_KEY }}" > /tmp/google-credentials.json
-    - name: Set Environment Variable
-      run: echo "GOOGLE_APPLICATION_CREDENTIALS=/tmp/google-credentials.json" >> $GITHUB_ENV
-
+    - name: Set up Google Cloud Authentication
+      env:
+        GCLOUD_CREDENTIALS: ${{ secrets.GCP_TF_KEY }}
+      run: |
+        echo $GCLOUD_CREDENTIALS > $HOME/gcloud_credentials.json
+        export GOOGLE_APPLICATION_CREDENTIALS=$HOME/gcloud_credentials.json
 
     - name: Check if user-specific files changed
       id: check_changes
@@ -51,8 +42,9 @@ jobs:
     - name: Initialize Terraform for ${{ matrix.user }}
       if: env.changed == '0'
       run: |
+        terraform workspace new ${matrix.user} || terraform workspace select ${matrix.user}
         # terraform init -backend-config=backend.tf
-          terraform init
+        terraform init
       env:
         GOOGLE_CREDENTIALS: ${{ secrets.GCP_TF_KEY}}
 
