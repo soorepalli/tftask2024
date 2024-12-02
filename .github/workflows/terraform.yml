@@ -55,6 +55,6 @@ jobs:
       # Step 8: Terraform Apply
       - name: Terraform Apply
         if: github.ref == 'refs/heads/main' # Apply only on main branch
-        run: terraform apply -var="bucket_prefix=tftk2024" -auto-approve tfplan
+        run: terraform apply -auto-approve tfplan
         env:
           GOOGLE_CREDENTIALS: ${{ secrets.GCP_TF_KEY}}
