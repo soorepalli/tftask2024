@@ -35,7 +35,7 @@ jobs:
       # Step 5: Initialize Terraform
       - name: Terraform Init
         env:
-          GOOGLE_APPLICATION_CREDENTIALS: ${{ env.GOOGLE_APPLICATION_CREDENTIALS }}
+          GOOGLE_APPLICATION_CREDENTIALS: ${{ env.GCP_TF_KEY }}
         run: terraform init
 
       # Step 6: Terraform Validate
