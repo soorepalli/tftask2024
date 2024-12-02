@@ -51,8 +51,9 @@ jobs:
       run: |
         user_workspace="${{ matrix.user }}"
         terraform workspace new "$user_workspace" || terraform workspace select "$user_workspace"
-        # terraform init -backend-config=backend.tf
-        terraform init
+        terraform init -backend-config=backend.tf
+        # terraform init
+
       env:
         GOOGLE_CREDENTIALS: ${{ secrets.GCP_TF_KEY}}
 
