@@ -3,7 +3,7 @@ locals {
 }
 
 module "gcs_buckets" {
-  #for_each = tomap({ for user_config in local.user_configs : user_config => user_config })
+  for_each = tomap({ for user_config in local.user_configs : user_config => user_config })
 
   source                      = "./modules/gcs_bucket"
   bucket_prefix               = var.bucket_prefix
@@ -13,5 +13,5 @@ module "gcs_buckets" {
   versioning                  = var.versioning
   uniform_bucket_level_access = var.uniform_bucket_level_access
   bucket_count                = var.bucket_count
-  
+
 }
