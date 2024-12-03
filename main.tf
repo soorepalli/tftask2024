@@ -15,3 +15,4 @@ module "gcs_buckets" {
   bucket_count                = var.bucket_count
 
 }
+
